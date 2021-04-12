@@ -41,8 +41,19 @@ def get_past_hour_param():
     return past_hour
 
 
-def reduce_production(production):
-    pass
+def group_production(production):
+    """Group coal production.
+    """
+    grouped_prod = {}
+
+    for k, v in production.items():
+        if k.startswith('uhli'):
+            grouped_prod['uhli'] = grouped_prod.setdefault('uhli', 0) + v
+        else:
+            grouped_prod[k] = v
+
+    return grouped_prod
+
 
 ENTSOE_URL = 'https://transparency.entsoe.eu/api?'
 
@@ -50,18 +61,18 @@ ENTSOE_SECURITY_TOKEN = os.getenv('ENTSOE_TOKEN')
 
 # https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html#_psrtype
 ENTSOE_SOURCE_MAPPING = {
-    'B01': 'Biomass',
-    'B02': 'Fossil Brown coal/Lignite',
-    'B03': 'Fossil Coal-derived gas',
-    'B04': 'Fossil Gas',
-    'B05': 'Fossil Hard coal',
-    'B06': 'Fossil Oil',
-    'B11': 'Hydro Run-of-river and poundage',
-    'B14': 'Nuclear',
-    'B15': 'Other renewable',
-    'B16': 'Solar',
-    'B17': 'Waste',
-    'B19': 'Wind Onshore',
+    'B01': 'biomasa',
+    'B02': 'uhli_hnede',
+    'B03': 'uhli_plyn',
+    'B04': 'plyn',
+    'B05': 'uhli_cerne',
+    'B06': 'ropa',
+    'B11': 'voda',
+    'B14': 'jadro',
+    'B15': 'ostatni_oze',
+    'B16': 'slunce',
+    'B17': 'odpad',
+    'B19': 'vitr',
     }
 
 ENTSOE_PARAMS = {

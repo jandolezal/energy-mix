@@ -10,20 +10,33 @@ def load_env():
     load_dotenv()
 
 
-test_production = {
-    'Biomass': 287,
-    'Fossil Brown coal/Lignite': 3392,
-    'Fossil Coal-derived gas': 269,
-    'Fossil Gas': 1268,
-    'Fossil Hard coal': 120,
-    'Fossil Oil': 0,
-    'Hydro Run-of-river and poundage':180,
-    'Nuclear': 2915,
-    'Other renewable':264,
-    'Solar': 334,
-    'Waste': 19,
-    'Wind Onshore': 103,
+sample_production = {
+    'biomasa': 1,
+    'uhli_hnede': 1,
+    'uhli_plyn': 1,
+    'plyn': 1,
+    'uhli_cerne': 1,
+    'ropa': 1,
+    'voda': 1,
+    'jadro': 1,
+    'ostatni_oze': 1,
+    'slunce': 1,
+    'odpad': 1,
+    'vitr': 1,
     }
+
+sample_grouped_production = {
+    'biomasa': 1,
+    'uhli': 3,
+    'plyn': 1,
+    'ropa': 1,
+    'jadro': 1,
+    'voda': 1,
+    'slunce': 1,
+    'vitr': 1,
+    'odpad': 1,
+    'ostatni_oze': 1,
+}
 
 @pytest.mark.skip(reason="This is calling Entsoe API")
 def test_get_production():
@@ -31,7 +44,12 @@ def test_get_production():
     data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
     production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
     assert production.keys() == test_production.keys()
-    assert production['Biomass'] > 0
-    assert production['Fossil Brown coal/Lignite'] > 0
-    assert production['Fossil Gas'] > 0
-    assert production['Nuclear'] > 0
+    assert production['biomasa'] > 0
+    assert production['uhli_hnede'] > 0
+    assert production['uhli_plyn'] > 0
+    assert production['jadro'] > 0
+
+
+def test_group_production():
+    grouped_production = entsoe.group_production(sample_production)
+    assert grouped_production == sample_grouped_production
