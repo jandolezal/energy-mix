@@ -1,3 +1,5 @@
+import datetime
+
 import pytest
 
 from dotenv import load_dotenv
@@ -38,6 +40,20 @@ sample_grouped_production = {
     'ostatni_oze': 1,
 }
 
+sample_reordered_production = {
+    'uhli': 3,
+    'plyn': 1,
+    'ropa': 1,
+    'jadro': 1,
+    'slunce': 1,
+    'vitr': 1,
+    'voda': 1,
+    'biomasa': 1,
+    'odpad': 1,
+    'ostatni_oze': 1,    
+}
+
+
 @pytest.mark.skip(reason="This is calling Entsoe API")
 def test_get_production():
     # Get energy for past hour from Entsoe API
@@ -50,6 +66,17 @@ def test_get_production():
     assert production['jadro'] > 0
 
 
+def test_get_past_hour_param():
+    past_hour_param = entsoe.get_past_hour_param()
+    today_string = datetime.datetime.now().strftime(format='%Y-%m-%d')
+    assert isinstance(past_hour_param, str)
+    assert today_string in past_hour_param
+    assert '%2F' in past_hour_param
+
 def test_group_production():
     grouped_production = entsoe.group_production(sample_production)
     assert grouped_production == sample_grouped_production
+
+def test_reorder_production():
+    reordered_production = entsoe.reorder_production(sample_grouped_production)
+    assert reordered_production == sample_reordered_production
