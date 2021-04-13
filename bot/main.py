@@ -5,26 +5,35 @@ import datetime
 
 import tweepy
 
-from entsoe import url, params, res_map, request_data, parse_xml, data_check
 from dotenv import load_dotenv
-from tweet import calculate_percentages, prepare_tweet
+
+import emojis
+import entsoe
 
 
 load_dotenv()
 
 
-if data_check(energy):
-    # Twitter app authentication
-    consumer_key = os.getenv('CONSUMER_KEY')
-    consumer_secret = os.getenv('CONSUMER_SECRET')
-    access_token = os.getenv('ACCESS_TOKEN')
-    access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+# Twitter app authentication
+consumer_key = os.getenv('CONSUMER_KEY')
+consumer_secret = os.getenv('CONSUMER_SECRET')
+access_token = os.getenv('ACCESS_TOKEN')
+access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-    api = tweepy.API(auth)
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_token, access_token_secret)
 
-    # Tweet the data
-    production = tweet.calculate_percentages(hour_production)
-    tweet = tweet.prepare_tweet(production)
-    # api.update_status(status=tweet)
+api = tweepy.API(auth)
+
+# Get the data
+data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
+production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
+grouped_production = entsoe.group_production(production)
+reordered_production = entsoe.reorder_production(grouped_production)
+
+# Make a string from emojis
+percentages = emojis.calculate_percentages(reordered_production)
+tweet = emojis.prepare_tweet(percentages)
+
+# Tweet the data
+api.update_status(status=tweet)
