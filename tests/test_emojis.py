@@ -1,5 +1,5 @@
 import pytest
-import bot.tweet as tweet
+import bot.emojis as emojis
 
 hour_13_production = {'uhli': 3345.0, 'plyn': 1166.0, 'ropa': 0.0, 'jadro': 2829.0,
 'slunce': 1498.0, 'vitr': 131.0, 'voda': 186.0, 'biomasa': 288.0, 'odpad': 18.0,
@@ -17,9 +17,9 @@ hour_16_percentages = {'uhli': 35, 'plyn': 10, 'ropa': 0, 'jadro': 31,
 
 
 def test_calculate_percentages_13_hour():
-    hour_percentages = tweet.calculate_percentages(hour_13_production)
+    hour_percentages = emojis.calculate_percentages(hour_13_production)
     assert hour_percentages == hour_13_percentages
 
 def test_calculate_percentages_16_hour():
-    hour_percentages = tweet.calculate_percentages(hour_16_production)
+    hour_percentages = emojis.calculate_percentages(hour_16_production)
     assert hour_percentages == hour_16_percentages
