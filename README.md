@@ -1,16 +1,16 @@
 # Energetický mix
 
-V přípravě. Twitter bot tvítující energetický mix výroby elektřiny v Česku za uplynulou hodinu z dat Entsoe.
+Twitter bot [@energymixcz](https://twitter.com/energymixcz) tvítující energetický mix elektřiny vyrobené v Česku za uplynulou hodinu z dat [Entsoe](https://transparency.entsoe.eu/).
 
 
-🏭 Uhlí
-🔥 Plyn
-🛢️ Ropa
-☢️ Jádro
-☀️ Slunce
-💨 Vítr
-💧 Voda
-🌿 Biomasa
-🗑️ Odpad
-♻️ Ostatní OZE
+🏭 uhlí
+🔥 zemní plyn
+🛢️ ropa
+☢️ jádro
+☀️ slunce
+💨 vítr
+💧 voda
+🌿 biomasa
+🗑️ odpad
+♻️ ostatní OZE
 
