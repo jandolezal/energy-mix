@@ -18,7 +18,7 @@ def request_data(url, params):
     return None
 
 
-def parse_xml(xml, res_map):
+def parse_xml(xml, mapping):
     """Parse renewable energy from xml string.
     """
     energy = {}
@@ -27,8 +27,8 @@ def parse_xml(xml, res_map):
     for serie in root.iter(ns + 'TimeSeries'):
         psr_type = serie.find(ns + 'MktPSRType').find(ns + 'psrType').text
         quantity = serie.find(ns + 'Period').find(ns + 'Point').find(ns + 'quantity').text
-        if psr_type in res_map:
-            energy[res_map[psr_type]] = int(quantity)
+        if psr_type in mapping:
+            energy[mapping[psr_type]] = int(quantity)
     return energy
 
 
@@ -53,6 +53,16 @@ def group_production(production):
             grouped_prod[k] = v
 
     return grouped_prod
+
+def reorder_production(production):
+    order = [
+        'uhli', 'plyn', 'ropa', 'jadro', 'slunce', 'vitr',
+        'voda', 'biomasa', 'odpad', 'ostatni_oze'
+        ]
+    
+    ordered_production = {k: production[k] for k in order}
+
+    return ordered_production
 
 
 ENTSOE_URL = 'https://transparency.entsoe.eu/api?'

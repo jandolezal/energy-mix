@@ -43,7 +43,7 @@ def test_get_production():
     # Get energy for past hour from Entsoe API
     data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
     production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
-    assert production.keys() == test_production.keys()
+    assert production.keys() == sample_production.keys()
     assert production['biomasa'] > 0
     assert production['uhli_hnede'] > 0
     assert production['uhli_plyn'] > 0
