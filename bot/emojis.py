@@ -51,6 +51,39 @@ def calculate_percentages(hour_production: Dict[str, float]) -> Dict[str, int]:
     return percentages
 
 
+# https://stackoverflow.com/questions/13483430/how-to-make-rounded-percentages-add-up-to-100
+# https://en.wikipedia.org/wiki/Largest_remainder_method
+def calculate_percentages_better(hour_production: Dict[str, float]) -> Dict[str, int]:
+    """Calculate percentages as integers from all values in the dictionary 
+    using the largest remainder method.
+    Returns dictionary with same keys but percentage values as integers.
+    """
+    total = sum(float(v) for v in hour_production.values())
+    percentages = {k: (v/total * 100) for k, v in hour_production.items()}
+    
+    # Round down percentages and compute remainders
+    floored = {k: int(v) for k, v in percentages.items()}
+    remainders = {k: v1-v2 for (k, v1,), v2 in zip(percentages.items(), floored.values())}
+    
+    # Get difference from floored total and 100
+    total_int = sum(v for v in floored.values())
+    diff_total_100 = 100 - total_int
+
+    # Distribute ones to sources with highest remainders until total is 100
+    sorted_remainders = {k: v for k, v in sorted(remainders.items(), key=lambda remainders: remainders[1], reverse=True)}
+
+    better_percentages = floored.copy()
+
+    for k, v in sorted_remainders.items():
+        if diff_total_100 > 0:
+            better_percentages[k] += 1
+            diff_total_100 -= 1
+        else:
+            break
+    
+    return better_percentages
+
+
 def prepare_tweet(production: Dict[str, int]) -> str:
     """Produce tweet from production with maximum 10 emojis per line
     with up to 10 or 11 lines depending on the rounding to integers.

@@ -23,7 +23,7 @@ if data:
     reordered_production = entsoe.reorder_production(grouped_production)
 
     # Make a string from emojis
-    percentages = emojis.calculate_percentages(reordered_production)
+    percentages = emojis.calculate_percentages_better(reordered_production)
     tweet = emojis.prepare_tweet(percentages)
 
 if tweet:
