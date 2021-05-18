@@ -7,26 +7,27 @@ import tweepy
 
 from dotenv import load_dotenv
 
-import emojis
-import entsoe
+from bot import emojis
+from bot import entsoe
 
 
 load_dotenv()
 
+def main():
+    # Request electricity production data from Entsoe
+    data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
 
-# Request electricity production data from Entsoe
-data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
+    if data:
+        production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
+        grouped_production = entsoe.group_production(production)
+        reordered_production = entsoe.reorder_production(grouped_production)
 
-if data:
-    production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
-    grouped_production = entsoe.group_production(production)
-    reordered_production = entsoe.reorder_production(grouped_production)
+        # Make a string from emojis
+        percentages = emojis.calculate_percentages_better(reordered_production)
+        tweet = emojis.prepare_tweet(percentages)
+    else:
+        raise SystemExit
 
-    # Make a string from emojis
-    percentages = emojis.calculate_percentages_better(reordered_production)
-    tweet = emojis.prepare_tweet(percentages)
-
-if tweet:
     # Twitter app authentication and setup
     consumer_key = os.getenv('CONSUMER_KEY')
     consumer_secret = os.getenv('CONSUMER_SECRET')
@@ -40,3 +41,7 @@ if tweet:
 
     # Tweet the emoji string
     api.update_status(status=tweet)
+
+
+if __name__ == '__main__':
+    main()
