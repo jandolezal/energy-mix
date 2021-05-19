@@ -26,13 +26,21 @@ Za každé procento podílu na výrobě jeden emoji.
 
 ♻️ ostatní OZE
 
-
 Překvapivě neexistuje emoji pro uhlí...
-
-TODO: Ověřit, zda ostatní OZE je výhradně bioplyn a nejspíš změnit emoji.
 
 ## Použití
 
 Předpokladem jsou údaje potřebné pro dotazy na Entsoe a Twitter API uložené v souboru `.env` v kořenovém adresáři.
 
-Beží jako cronjob 07 6-18 * * *
+Pomocí `pip` instalovat z místního adresáře `energy-mix` v rámci virtuálního prostředí (zdá se, že cronjob nepodporuje spouštění s možností `-m`, e.g. `python -m bot.main`).
+
+```
+python -m venv venv
+source venv/bin/activate
+pip install --use-feature=in-tree-build .
+crontab -e
+```
+
+Insert cronjob: `07 6-18 * * * /path/to/installed/endpoint/energy-mix/`
+
+TODO: Ověřit, zda ostatní OZE je výhradně bioplyn a nejspíš změnit emoji a zpřehlednit konfiguraci.
