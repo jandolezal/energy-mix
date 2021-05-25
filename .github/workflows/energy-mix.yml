@@ -1,7 +1,7 @@
 name: energy-mix
 on:
   schedule:
-    - cron: "07 6-18 * * *"
+    - cron: "45 4-16 * * *"
 jobs:
   build:
     runs-on: ubuntu-latest
