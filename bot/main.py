@@ -40,8 +40,10 @@ def main():
     api = tweepy.API(auth)
 
     # Tweet the emoji string
-    api.update_status(status=tweet)
-
+    try:
+        api.update_status(status=tweet)
+    except tweepy.TweepError as e:
+        print(e.message)
 
 if __name__ == '__main__':
     main()
