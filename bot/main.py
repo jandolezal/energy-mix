@@ -43,7 +43,7 @@ def main():
     try:
         api.update_status(status=tweet)
     except tweepy.TweepError as e:
-        print(e.message)
+        print(e)
 
 if __name__ == '__main__':
     main()
