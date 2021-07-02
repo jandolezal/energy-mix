@@ -40,15 +40,13 @@ Běží jako [GitHub Action](https://docs.github.com/en/actions/guides/building-
 
 Předpokladem jsou údaje potřebné pro dotazy na Entsoe a Twitter API uložené v souboru `.env` v kořenovém adresáři.
 
-Pomocí `pip` instalovat z místního adresáře `energy-mix` v rámci virtuálního prostředí (zdá se, že cronjob nepodporuje spouštění s možností `-m`, např. `python -m bot.main`).
+Pomocí `pip` instalovat z místního adresáře `energy-mix` v rámci virtuálního prostředí.
 
 ```
-python -m venv venv
+python3 -m venv venv
 source venv/bin/activate
 pip install --use-feature=in-tree-build .
 crontab -e
 ```
 
 Nastavit cronjob `07 6-18 * * * /path/to/installed/endpoint/energy-mix/`
-
-TODO: Ověřit, zda ostatní OZE je výhradně bioplyn a nejspíš změnit emoji a zpřehlednit konfiguraci.
