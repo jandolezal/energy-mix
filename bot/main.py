@@ -3,9 +3,8 @@
 import os
 import datetime
 
-import tweepy
-
 from dotenv import load_dotenv
+import tweepy
 
 from bot import emojis
 from bot import entsoe
@@ -14,17 +13,13 @@ from bot import entsoe
 load_dotenv()
 
 def main():
-    # Request electricity production data from Entsoe
-    data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
+    # Request electricity production data from Entsoe for past hour
+    data = entsoe.get_data()
 
     if data:
-        production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
-        grouped_production = entsoe.group_production(production)
-        reordered_production = entsoe.reorder_production(grouped_production)
-
-        # Make a string from emojis
-        percentages = emojis.calculate_percentages_better(reordered_production)
-        tweet = emojis.prepare_tweet(percentages)
+        # Make a string from emojis based on data
+        percentages = emojis.calculate_percentages_better(data)
+        tweet = emojis.prepare_tweet(production=percentages)
     else:
         raise SystemExit
 
@@ -40,10 +35,8 @@ def main():
     api = tweepy.API(auth)
 
     # Tweet the emoji string
-    try:
-        api.update_status(status=tweet)
-    except tweepy.TweepError as e:
-        print(e)
+    api.update_status(status=tweet)
+
 
 if __name__ == '__main__':
     main()

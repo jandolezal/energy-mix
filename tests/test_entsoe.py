@@ -1,7 +1,6 @@
 import datetime
 
 import pytest
-
 from dotenv import load_dotenv
 
 import bot.entsoe as entsoe
@@ -54,16 +53,35 @@ sample_reordered_production = {
 }
 
 
+def test_get_updated_params():
+    params = entsoe.get_udated_params(entsoe.ENTSOE_PARAMS)
+    assert params['securityToken'] is not None
+    assert params['TimeInterval'] is not None
+
+
 @pytest.mark.skip(reason="This is calling Entsoe API")
 def test_get_production():
     # Get energy for past hour from Entsoe API
-    data = entsoe.request_data(entsoe.ENTSOE_URL, entsoe.ENTSOE_PARAMS)
+    params = entsoe.get_udated_params(entsoe.ENTSOE_PARAMS)
+    data = entsoe.request_data(entsoe.ENTSOE_URL, params)
+    assert data
     production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
     assert production.keys() == sample_production.keys()
     assert production['biomasa'] > 0
     assert production['uhli_hnede'] > 0
     assert production['uhli_plyn'] > 0
     assert production['jadro'] > 0
+
+
+@pytest.mark.skip(reason="This is calling Entsoe API")
+def test_get_data():
+    # Get energy for past hour from Entsoe API
+    data = entsoe.get_data()
+
+    # These sources produce electricity all the time with more than zero share
+    assert data['biomasa'] > 0
+    assert data['uhli'] > 0
+    assert data['jadro'] > 0
 
 
 def test_get_past_hour_param():
