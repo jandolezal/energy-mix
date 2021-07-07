@@ -52,12 +52,22 @@ def calculate_percentages(hour_production: Dict[str, float]) -> Dict[str, int]:
     return percentages
 
 
-# https://stackoverflow.com/questions/13483430/how-to-make-rounded-percentages-add-up-to-100
-# https://en.wikipedia.org/wiki/Largest_remainder_method
 def calculate_percentages_better(hour_production: Dict[str, float]) -> Dict[str, int]:
     """Calculate percentages as integers from all values in the dictionary 
-    using the largest remainder method.
-    Returns dictionary with same keys but percentage values as integers.
+    using the `largest remainder method`_.
+
+    See e.g. this `StackOverflow`_ discussion.
+    
+    Args:
+        hour_production (Dict[str, float]): Dictionary with production. Key is resource type,
+        value is production in MW.
+
+    Returns:
+        Dict[str, int]: Returns hour production with the percentage share for 
+        each resource as integer.
+    
+    .. _largest remainder method: https://en.wikipedia.org/wiki/Largest_remainder_method
+    .. _StackOverflow: https://stackoverflow.com/questions/13483430/how-to-make-rounded-percentages-add-up-to-100
     """
     total = sum(float(v) for v in hour_production.values())
     percentages = {k: (v/total * 100) for k, v in hour_production.items()}
@@ -90,10 +100,19 @@ def calculate_percentages_better(hour_production: Dict[str, float]) -> Dict[str,
 
 
 def prepare_tweet(production: Dict[str, int], emoji_mapping: Dict[str, str] = EMOJI_MAPPING) -> str:
-    """Produce tweet from production with maximum 10 emojis per line
-    with up to 10 or 11 lines depending on the rounding to integers.
+    """Produce tweet from the energy production with maximum 10 emojis per line.
+    
+    Up to 10 or 11 lines depending on the rounding to integers (only 10 with last remainder method).
+
+    Args:
+        production (Dict[str, int]): Production for each resource type with values as integers.
+        emoji_mapping (Dict[str, str], optional): Map from resource type to emoji. Defaults to EMOJI_MAPPING.
+
+    Returns:
+        str: Tweet string.
     """
-    tweet_line = ''
+    # First gather emojis for all resources as one long line
+    tweet_string = ''
 
     for resource in production:
         frequency = production.get(resource)
@@ -104,14 +123,15 @@ def prepare_tweet(production: Dict[str, int], emoji_mapping: Dict[str, str] = EM
         if len(symbol) == 1:  
             symbol += ' '  
         
-        new_string = symbol * frequency
-        tweet_line += new_string
+        resource_emojis = symbol * frequency
+        tweet_string += resource_emojis
 
-    # 10 emojis on line, one emoji 2 characters long
+    # Split the string to lines with 10 emojis on line
     n = 20
-    tweet_lines = [tweet_line[i: i+n] for i in range(0, len(tweet_line), n)]
+    tweet_lines = [tweet_string[i: i+n] for i in range(0, len(tweet_string), n)]
     
-    # Now that I have 10 emojis per line get rid of the whitespace
+    # Now that we have 10 emojis per line get rid of the whitespace
+    # which was used to have all emojis 2 characters long.
     # Twitter counts each emoji as 2 characters long no matter what
     tweet_lines = [line.replace(' ', '') for line in tweet_lines]
 
