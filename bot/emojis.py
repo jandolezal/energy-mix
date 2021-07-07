@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 
-"""The idea is to have a tweet with approx. 100 emojis
-(depending on rounding) to represent the energy mix of
-electricity production in Czechia for one hour.
-Later I might add a logic to make sure there is exactly
-100 emojis every hour (the percentage sums to 100).
+"""The idea is to have a tweet with 100 emojis to represent the energy mix 
+of electricity production in Czechia during one hour.
+
+One emoji for each percentage share of the resource (such as coal or nuclear)
+on electricity production.
 
 Twitter counts every emoji as two characters.
 """
@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import List, Dict
 
 
-emoji_mapping = {
+EMOJI_MAPPING = {
     'uhli': '🏭',
     'plyn': '🔥',
     'jadro': '☢️',
@@ -41,10 +41,11 @@ def get_production_for_one_day(csv_path: Path) -> Dict[str, float]:
     return one_day
 
 
-# Use some method in future to deal with the rounding (total not always 100)
 def calculate_percentages(hour_production: Dict[str, float]) -> Dict[str, int]:
     """Calculate percentages from all values in the dictionary.
+
     Returns dictionary with same keys but percentage values as integers.
+    Percentage total not always 100 due to rounding to integers
     """
     total = sum(float(v) for v in hour_production.values())
     percentages = {k: int(round(v/total * 100)) for k, v in hour_production.items()}
@@ -69,14 +70,18 @@ def calculate_percentages_better(hour_production: Dict[str, float]) -> Dict[str,
     total_int = sum(v for v in floored.values())
     diff_total_100 = 100 - total_int
 
-    # Distribute ones to sources with highest remainders until total is 100
-    sorted_remainders = {k: v for k, v in sorted(remainders.items(), key=lambda remainders: remainders[1], reverse=True)}
+    # Distribute ones to sources with the highest remainder until total production is 100
+    sorted_remainders = {
+        k: v for k, v in sorted(remainders.items(),
+        key=lambda remainders: remainders[1],
+        reverse=True)
+        }
 
     better_percentages = floored.copy()
 
-    for k, v in sorted_remainders.items():
+    for resource in sorted_remainders:
         if diff_total_100 > 0:
-            better_percentages[k] += 1
+            better_percentages[resource] += 1
             diff_total_100 -= 1
         else:
             break
@@ -84,15 +89,15 @@ def calculate_percentages_better(hour_production: Dict[str, float]) -> Dict[str,
     return better_percentages
 
 
-def prepare_tweet(production: Dict[str, int]) -> str:
+def prepare_tweet(production: Dict[str, int], emoji_mapping: Dict[str, str] = EMOJI_MAPPING) -> str:
     """Produce tweet from production with maximum 10 emojis per line
     with up to 10 or 11 lines depending on the rounding to integers.
     """
     tweet_line = ''
 
-    for k, v in production.items():
-        frequency = production.get(k)
-        symbol = emoji_mapping[k]
+    for resource in production:
+        frequency = production.get(resource)
+        symbol = emoji_mapping[resource]
 
         # some emojis are 2 characters long, some only one
         # set on 2 characters to make division to lines easier
@@ -125,6 +130,6 @@ if __name__ == '__main__':
         print(i)
         print(production)
         print(sum(v for v in production.values()))
-        tweet = prepare_tweet(production)
+        tweet = prepare_tweet(production, EMOJI_MAPPING)
         print(tweet)
         print('\n')
