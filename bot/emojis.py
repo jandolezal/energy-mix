@@ -28,7 +28,7 @@ EMOJI_MAPPING = {
 }
 
 
-def get_production_for_one_day(csv_path: Path) -> Dict[str, float]:
+def get_production_for_one_day(csv_path: Path) -> List[Dict[str, float]]:
     """Get one hour of production for testing from csv file.
     Type of source in columns, 24 rows for each hour in one day.
     """
@@ -115,13 +115,13 @@ def prepare_tweet(production: Dict[str, int], emoji_mapping: Dict[str, str] = EM
     tweet_string = ''
 
     for resource in production:
-        frequency = production.get(resource)
+        frequency = production.get(resource, 0)
         symbol = emoji_mapping[resource]
 
         # some emojis are 2 characters long, some only one
         # set on 2 characters to make division to lines easier
         if len(symbol) == 1:  
-            symbol += ' '  
+            symbol += ' '
         
         resource_emojis = symbol * frequency
         tweet_string += resource_emojis

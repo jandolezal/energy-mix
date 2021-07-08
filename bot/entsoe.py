@@ -1,10 +1,11 @@
 import datetime
 import os
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 import xml.etree.ElementTree as ET
 
 from dotenv import load_dotenv
 import requests
+import xmltodict # type: ignore
 
 
 load_dotenv()
@@ -40,7 +41,7 @@ ENTSOE_PARAMS = {
     }
 
 
-def request_data(url: str, params: Dict[str, str]) -> Optional[str]:
+def request_data(url: str, params: Dict[str, Any]) -> Optional[str]:
     """Request data about energy production from Entsoe API.
 
     Args:
@@ -70,14 +71,15 @@ def parse_xml(xml:str, mapping: Dict[str, str]) -> Dict[str, int]:
     Returns:
         Dict[str, int]: Dictionary with production in MW for each resource type.
     """
+    d = xmltodict.parse(xml)
     energy = {}
-    root = ET.fromstring(xml)
-    ns = '{urn:iec62325.351:tc57wg16:451-6:generationloaddocument:3:0}'
-    for serie in root.iter(ns + 'TimeSeries'):
-        psr_type = serie.find(ns + 'MktPSRType').find(ns + 'psrType').text
-        quantity = serie.find(ns + 'Period').find(ns + 'Point').find(ns + 'quantity').text
+
+    for serie in d['GL_MarketDocument']['TimeSeries']:
+        psr_type = serie['MktPSRType']['psrType']
+        quantity = serie['Period']['Point']['quantity']
         if psr_type in mapping:
             energy[mapping[psr_type]] = int(quantity)
+
     return energy
 
 
@@ -96,7 +98,7 @@ def get_past_hour_param() -> str:
     return past_hour
 
 
-def get_udated_params(params: Dict[str, str]) -> Dict[str, str]:
+def get_udated_params(params: Dict[str, Any]) -> Dict[str, str]:
     timeinterval = get_past_hour_param()
     params['TimeInterval'] = timeinterval
 
@@ -113,7 +115,7 @@ def group_production(production: Dict[str, int]) -> Dict[str, int]:
         Dict[str, int]: Dictionary with production for each resource type.
         Only one entry for various types of coal.
     """
-    grouped_prod = {}
+    grouped_prod: Dict[str, int] = {}
 
     for k, v in production.items():
         if k.startswith('uhli'):
@@ -145,7 +147,7 @@ def reorder_production(production: Dict[str, int]) -> Dict[str, int]:
 
 def get_data(
     url: str =ENTSOE_URL,
-    default_params: Dict[str, str] = ENTSOE_PARAMS,
+    default_params: Dict[str, Any] = ENTSOE_PARAMS,
     mapping: Dict[str, str] = ENTSOE_SOURCE_MAPPING
     ) -> Optional[Dict[str, int]]:
     """Get electricity production from Entsoe.

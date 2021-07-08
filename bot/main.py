@@ -4,7 +4,7 @@ import os
 import datetime
 
 from dotenv import load_dotenv
-import tweepy
+import tweepy # type: ignore
 
 from bot import emojis
 from bot import entsoe
