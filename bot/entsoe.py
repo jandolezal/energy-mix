@@ -25,6 +25,7 @@ ENTSOE_SOURCE_MAPPING = {
     'B05': 'uhli_cerne',
     'B06': 'ropa',
     'B11': 'voda',
+    'B12': 'voda_rezervoar',
     'B14': 'jadro',
     'B15': 'ostatni_oze',
     'B16': 'slunce',
@@ -106,7 +107,7 @@ def get_udated_params(params: Dict[str, Any]) -> Dict[str, str]:
 
 
 def group_production(production: Dict[str, int]) -> Dict[str, int]:
-    """Group various types of coal (e.g. lignite, hard coal).
+    """Group various types of coal (e.g. lignite, hard coal) and hydro (river, reservoir).
 
     Args:
         production (Dict[str, int]): Dictionary with production for each resource type.
@@ -120,6 +121,8 @@ def group_production(production: Dict[str, int]) -> Dict[str, int]:
     for k, v in production.items():
         if k.startswith('uhli'):
             grouped_prod['uhli'] = grouped_prod.setdefault('uhli', 0) + v
+        elif k.startswith('voda'):
+            grouped_prod['voda'] = grouped_prod.setdefault('voda', 0) + v
         else:
             grouped_prod[k] = v
 
