@@ -42,12 +42,12 @@ sample_grouped_production = {
 
 sample_reordered_production = {
     'uhli': 3,
+    'voda': 2,
     'plyn': 1,
     'ropa': 1,
     'jadro': 1,
     'slunce': 1,
     'vitr': 1,
-    'voda': 2,
     'biomasa': 1,
     'odpad': 1,
     'ostatni_oze': 1,    
@@ -98,4 +98,5 @@ def test_group_production():
 
 def test_reorder_production():
     reordered_production = entsoe.reorder_production(sample_grouped_production)
-    assert reordered_production == sample_reordered_production
+    assert list(reordered_production.keys())[0] == list(sample_reordered_production.keys())[0]
+    assert list(reordered_production.keys())[1] == list(sample_reordered_production.keys())[1]

@@ -130,7 +130,7 @@ def group_production(production: Dict[str, int]) -> Dict[str, int]:
 
 
 def reorder_production(production: Dict[str, int]) -> Dict[str, int]:
-    """Reorder production.
+    """Sort by production in descending order.
 
     Args:
         production (Dict[str, int]): Dictionary with production for each resource type.
@@ -138,14 +138,7 @@ def reorder_production(production: Dict[str, int]) -> Dict[str, int]:
     Returns:
         Dict[str, int]: Dictionary with production for each resource type.
     """
-    order = [
-        'uhli', 'plyn', 'ropa', 'jadro', 'slunce', 'vitr',
-        'voda', 'biomasa', 'odpad', 'ostatni_oze'
-        ]
-    
-    ordered_production = {k: production[k] for k in order}
-
-    return ordered_production
+    return dict(sorted(production.items(), key=lambda items: items[1], reverse=True))
  
 
 def get_data(
