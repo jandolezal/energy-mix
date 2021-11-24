@@ -26,9 +26,7 @@ Za každé procento podílu na výrobě jeden emoji.
 
 ♻️ ostatní OZE
 
-Překvapivě neexistuje emoji pro uhlí...
-
-Tweet ve 14:?? pokrývá elektřinu vyrobenou v čase 13:00-14:00. Případný výpadek je způsobený identickou výrobou (z hlediska zaokrouhleného podílu). Tweepy nedovolí duplicitní tweet v řadě.
+Status ve 14:?? pokrývá elektřinu vyrobenou v čase 13:00-14:00. Případný výpadek je způsobený identickou výrobou (z hlediska zaokrouhleného podílu). Twitter API nedovolí duplicitní tweet v řadě.
 
 ## Použití
 
