@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 
 import os
-import datetime
 
 from dotenv import load_dotenv
-import tweepy # type: ignore
+import tweepy  # type: ignore
 
 from bot import emojis
 from bot import entsoe
@@ -12,12 +11,13 @@ from bot import entsoe
 
 load_dotenv()
 
+
 def main():
     # Request electricity production data from Entsoe for past hour
     data = entsoe.get_data()
 
     if data:
-        # Make a string from emojis based on data
+        # Make a string from emojis based on data
         percentages = emojis.calculate_percentages_better(data)
         tweet = emojis.prepare_tweet(production=percentages)
     else:

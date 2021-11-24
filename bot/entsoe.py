@@ -1,11 +1,10 @@
 import datetime
 import os
 from typing import Any, Dict, Optional
-import xml.etree.ElementTree as ET
 
 from dotenv import load_dotenv
 import requests
-import xmltodict # type: ignore
+import xmltodict  # type: ignore
 
 
 load_dotenv()
@@ -16,7 +15,7 @@ ENTSOE_URL = 'https://transparency.entsoe.eu/api?'
 ENTSOE_SECURITY_TOKEN = os.getenv('ENTSOE_TOKEN')
 
 # Complete parameter list in Entsoe API documentation.
-# https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html#_psrtype
+# https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html#_psrtype
 ENTSOE_SOURCE_MAPPING = {
     'B01': 'biomasa',
     'B02': 'uhli_hnede',
@@ -31,7 +30,7 @@ ENTSOE_SOURCE_MAPPING = {
     'B16': 'slunce',
     'B17': 'odpad',
     'B19': 'vitr',
-    }
+}
 
 ENTSOE_PARAMS = {
     'securityToken': ENTSOE_SECURITY_TOKEN,
@@ -39,7 +38,7 @@ ENTSOE_PARAMS = {
     'ProcessType': 'A16',
     'DocumentType': 'A75',
     'TimeInterval': None,
-    }
+}
 
 
 def request_data(url: str, params: Dict[str, Any]) -> Optional[str]:
@@ -53,7 +52,7 @@ def request_data(url: str, params: Dict[str, Any]) -> Optional[str]:
         Optional[str]: If response status is ok returns xml response as a string.
     """
     headers = {
-    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0'
+        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0'
     }
     r = requests.get(url, params=params, headers=headers)
     if r.status_code == 200:
@@ -61,7 +60,7 @@ def request_data(url: str, params: Dict[str, Any]) -> Optional[str]:
     return None
 
 
-def parse_xml(xml:str, mapping: Dict[str, str]) -> Dict[str, int]:
+def parse_xml(xml: str, mapping: Dict[str, str]) -> Dict[str, int]:
     """Parse energy production from xml string for each resource type.
 
     Args:
@@ -92,7 +91,9 @@ def get_past_hour_param() -> str:
     Returns:
         str: Timeinterval param for Entsoe API call, e.g. '2021-07-07T05%2F2021-07-07T06'
     """
-    start = (datetime.datetime.utcnow() - datetime.timedelta(hours=1)).isoformat(timespec='hours')
+    start = (datetime.datetime.utcnow() - datetime.timedelta(hours=1)).isoformat(
+        timespec='hours'
+    )
     end = datetime.datetime.utcnow().isoformat(timespec='hours')
     # %2F as backslash for the get request timeinterval parameter
     past_hour = start + '%2F' + end
@@ -139,20 +140,20 @@ def reorder_production(production: Dict[str, int]) -> Dict[str, int]:
         Dict[str, int]: Dictionary with production for each resource type.
     """
     return dict(sorted(production.items(), key=lambda items: items[1], reverse=True))
- 
+
 
 def get_data(
-    url: str =ENTSOE_URL,
+    url: str = ENTSOE_URL,
     default_params: Dict[str, Any] = ENTSOE_PARAMS,
-    mapping: Dict[str, str] = ENTSOE_SOURCE_MAPPING
-    ) -> Optional[Dict[str, int]]:
+    mapping: Dict[str, str] = ENTSOE_SOURCE_MAPPING,
+) -> Optional[Dict[str, int]]:
     """Get electricity production from Entsoe.
 
     Args:
         url (str, optional): Entsoe production API url. Defaults to ENTSOE_URL.
-        default_params (Dict[str, str], optional): Placeholder params for get request. 
+        default_params (Dict[str, str], optional): Placeholder params for get request.
         Defaults to ENTSOE_PARAMS.
-        mapping (Dict[str, str], optional): Mapping from Entsoe resource type codes to Czech labels. 
+        mapping (Dict[str, str], optional): Mapping from Entsoe resource type codes to Czech labels.
         Defaults to ENTSOE_SOURCE_MAPPING.
 
     Returns:
