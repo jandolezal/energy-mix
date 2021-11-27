@@ -43,8 +43,8 @@ Pomocí `pip` instalovat z místního adresáře `energy-mix` v rámci virtuáln
 ```
 python3 -m venv venv
 source venv/bin/activate
-pip install --use-feature=in-tree-build .
+pip install .
 crontab -e
 ```
 
-Nastavit cronjob `07 6-18 * * * /path/to/installed/endpoint/energy-mix/`
+Nastavit cronjob `07 6-18 * * * /path/to/energy-mix`
