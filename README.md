@@ -1,6 +1,6 @@
 # Energetický mix
 
-Twitter bot [@energymixcz](https://twitter.com/energymixcz) tvítující energetický mix elektřiny vyrobené v Česku za předešlou hodinu z dat [Entsoe](https://transparency.entsoe.eu/).
+Twitter bot [@energetickymix](https://twitter.com/energetickymix) tvítující energetický mix elektřiny vyrobené v Česku za předešlou hodinu z dat [Entsoe](https://transparency.entsoe.eu/).
 
 ![Screenshot of the bot status](images/status.png)
 
