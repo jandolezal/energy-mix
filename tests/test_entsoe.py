@@ -25,7 +25,7 @@ sample_production = {
     'slunce': 1,
     'odpad': 1,
     'vitr': 1,
-    }
+}
 
 sample_grouped_production = {
     'biomasa': 1,
@@ -50,37 +50,30 @@ sample_reordered_production = {
     'vitr': 1,
     'biomasa': 1,
     'odpad': 1,
-    'ostatni_oze': 1,    
+    'ostatni_oze': 1,
 }
-
-
-def test_get_updated_params():
-    params = entsoe.get_udated_params(entsoe.ENTSOE_PARAMS)
-    assert params['securityToken'] is not None
-    assert params['TimeInterval'] is not None
 
 
 @pytest.mark.skip(reason="This is calling Entsoe API")
 def test_get_production():
-    # Get energy for past hour from Entsoe API
-    params = entsoe.get_udated_params(entsoe.ENTSOE_PARAMS)
+    params = entsoe.entsoe_params.copy()
+    params["TimeInterval"] = '2022-02-25T11%2F2022-02-25T12'
     data = entsoe.request_data(entsoe.ENTSOE_URL, params)
     assert data
     production = entsoe.parse_xml(data, entsoe.ENTSOE_SOURCE_MAPPING)
-    assert production.keys() == sample_production.keys()
-    assert production['biomasa'] > 0
-    assert production['uhli_hnede'] > 0
-    assert production['uhli_plyn'] > 0
-    assert production['jadro'] > 0
+    assert production['biomasa'] == 264
+    assert production['uhli_cerne'] == 193
+    assert production['uhli_hnede'] == 3876
+    assert production['plyn'] == 582
+    assert production['jadro'] == 3496
 
 
 @pytest.mark.skip(reason="This is calling Entsoe API")
 def test_get_data():
     # Get energy for past hour from Entsoe API
     data = entsoe.get_data()
-
     # These sources produce electricity all the time with more than zero share
-    assert data['biomasa'] > 0
+    assert data['plyn'] > 0
     assert data['uhli'] > 0
     assert data['jadro'] > 0
 
@@ -92,11 +85,19 @@ def test_get_past_hour_param():
     assert today_string in past_hour_param
     assert '%2F' in past_hour_param
 
+
 def test_group_production():
     grouped_production = entsoe.group_production(sample_production)
     assert grouped_production == sample_grouped_production
 
+
 def test_reorder_production():
     reordered_production = entsoe.reorder_production(sample_grouped_production)
-    assert list(reordered_production.keys())[0] == list(sample_reordered_production.keys())[0]
-    assert list(reordered_production.keys())[1] == list(sample_reordered_production.keys())[1]
+    assert (
+        list(reordered_production.keys())[0]
+        == list(sample_reordered_production.keys())[0]
+    )
+    assert (
+        list(reordered_production.keys())[1]
+        == list(sample_reordered_production.keys())[1]
+    )

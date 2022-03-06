@@ -32,7 +32,7 @@ ENTSOE_SOURCE_MAPPING = {
     'B19': 'vitr',
 }
 
-ENTSOE_PARAMS = {
+entsoe_params = {
     'securityToken': ENTSOE_SECURITY_TOKEN,
     'In_Domain': '10YCZ-CEPS-----N',
     'ProcessType': 'A16',
@@ -100,13 +100,6 @@ def get_past_hour_param() -> str:
     return past_hour
 
 
-def get_udated_params(params: Dict[str, Any]) -> Dict[str, str]:
-    timeinterval = get_past_hour_param()
-    params['TimeInterval'] = timeinterval
-
-    return params
-
-
 def group_production(production: Dict[str, int]) -> Dict[str, int]:
     """Group various types of coal (e.g. lignite, hard coal) and hydro (river, reservoir).
 
@@ -143,28 +136,33 @@ def reorder_production(production: Dict[str, int]) -> Dict[str, int]:
 
 
 def get_data(
+    timeinterval: str = None,
     url: str = ENTSOE_URL,
-    default_params: Dict[str, Any] = ENTSOE_PARAMS,
-    mapping: Dict[str, str] = ENTSOE_SOURCE_MAPPING,
+    params: Dict[str, Any] = entsoe_params,
+    source_codes: Dict[str, str] = ENTSOE_SOURCE_MAPPING,
 ) -> Optional[Dict[str, int]]:
     """Get electricity production from Entsoe.
 
     Args:
         url (str, optional): Entsoe production API url. Defaults to ENTSOE_URL.
-        default_params (Dict[str, str], optional): Placeholder params for get request.
-        Defaults to ENTSOE_PARAMS.
-        mapping (Dict[str, str], optional): Mapping from Entsoe resource type codes to Czech labels.
+        params (Dict[str, str], optional): Params to call Entsoe API except TimeInterval.
+        Defaults to entsoe_params.
+        source_codes (Dict[str, str], optional): Mapping from Entsoe resource type codes to Czech labels.
         Defaults to ENTSOE_SOURCE_MAPPING.
 
     Returns:
-        Optional[Dict[str, int]]: [description]
+        Optional[Dict[str, int]]: Dictionary with resource type as a key and energy production as value (descending order by value).
     """
+    # Update params to request production for previous hour
+    if not timeinterval:
+        timeinterval = get_past_hour_param()
+    params['TimeInterval'] = timeinterval
 
-    params = get_udated_params(default_params)
+    # Get a xml string with data
     data = request_data(url, params)
 
     if data:
-        production = parse_xml(data, mapping)
+        production = parse_xml(data, source_codes)
         grouped_production = group_production(production)
         reordered_production = reorder_production(grouped_production)
         return reordered_production
