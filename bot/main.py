@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import logging
 import os
 
 from dotenv import load_dotenv
@@ -37,7 +38,8 @@ def main():
     # Tweet the emoji string
     try:
         api.update_status(status=tweet)
-    except tweepy.error.TweepError:
+    except tweepy.errors.Forbidden as e:
+        logging.exception(e)
         raise SystemExit
 
 
