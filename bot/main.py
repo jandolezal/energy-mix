@@ -39,7 +39,7 @@ def main():
     try:
         api.update_status(status=tweet)
     except tweepy.errors.Forbidden as e:
-        logging.exception(e)
+        logging.error(e)
         raise SystemExit
 
 
