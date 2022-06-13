@@ -2,7 +2,7 @@ name: energy-mix
 
 on:
   schedule:
-    - cron: "01 6-16 * * *"
+    - cron: "05 6-18 * * *"
 
 jobs:
   build:
