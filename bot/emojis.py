@@ -28,18 +28,6 @@ EMOJI_MAPPING = {
 }
 
 
-def get_production_for_one_day(csv_path: Path) -> List[Dict[str, float]]:
-    """Get one hour of production for testing from csv file.
-    Type of source in columns, 24 rows for each hour in one day.
-    """
-
-    with open(csv_path) as csvf:
-        reader = csv.DictReader(csvf)
-        # Convert string values to float
-        one_day = [{k: float(v) for k, v in row.items()} for row in reader]
-    return one_day
-
-
 def calculate_percentages(hour_production: Dict[str, float]) -> Dict[str, int]:
     """Calculate percentages from all values in the dictionary.
 
@@ -146,18 +134,3 @@ def prepare_tweet(
     tweet = '\n'.join(tweet_lines)
 
     return tweet
-
-
-if __name__ == '__main__':
-    csv_path = Path.cwd() / 'samples' / 'one-april-day.csv'
-    one_day = get_production_for_one_day(csv_path)
-
-    # Testing what to expect
-    for i in range(24):
-        production = calculate_percentages(one_day[i])
-        print(i)
-        print(production)
-        print(sum(v for v in production.values()))
-        tweet = prepare_tweet(production, EMOJI_MAPPING)
-        print(tweet)
-        print('\n')
