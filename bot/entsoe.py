@@ -10,7 +10,7 @@ import xmltodict  # type: ignore
 load_dotenv()
 
 
-ENTSOE_URL = 'https://transparency.entsoe.eu/api?'
+ENTSOE_URL = 'https://web-api.tp.entsoe.eu/api?'
 
 ENTSOE_SECURITY_TOKEN = os.getenv('ENTSOE_TOKEN')
 
