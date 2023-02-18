@@ -32,6 +32,8 @@ Status ve 14:?? pokrývá elektřinu vyrobenou v čase 13:00-14:00. Případný 
 
 ### GitHub Action
 
+[![energy-mix](https://github.com/jandolezal/energy-mix/actions/workflows/energy-mix.yml/badge.svg?branch=main)](https://github.com/jandolezal/energy-mix/actions/workflows/energy-mix.yml)
+
 Běží jako [GitHub Action](https://docs.github.com/en/actions/guides/building-and-testing-python) dle nastavení v `.github/workflows`. Je třeba pro repozitář [nastavit](https://docs.github.com/en/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository) tokeny pro komunikaci s Entsoe a Twitter API.
 
 ### Lokálně
