@@ -25,19 +25,22 @@ def main():
         raise SystemExit
 
     # Twitter app authentication and setup
-    consumer_key = os.getenv('CONSUMER_KEY')
-    consumer_secret = os.getenv('CONSUMER_SECRET')
-    access_token = os.getenv('ACCESS_TOKEN')
-    access_token_secret = os.getenv('ACCESS_TOKEN_SECRET')
+    # https://docs.tweepy.org/en/stable/examples.html
+    consumer_key = os.getenv("TWITTER_CONSUMER_KEY")
+    consumer_secret = os.getenv("TWITTER_CONSUMER_SECRET")
+    access_token = os.getenv("TWITTER_ACCESS_TOKEN")
+    access_token_secret = os.getenv("TWITTER_ACCESS_TOKEN_SECRET")
 
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_token, access_token_secret)
-
-    api = tweepy.API(auth)
+    client = tweepy.Client(
+        consumer_key=consumer_key,
+        consumer_secret=consumer_secret,
+        access_token=access_token,
+        access_token_secret=access_token_secret,
+    )
 
     # Tweet the emoji string
     try:
-        api.update_status(status=tweet)
+        client.create_tweet(text=tweet)
     except tweepy.errors.Forbidden as e:
         logging.error(e)
         raise SystemExit
