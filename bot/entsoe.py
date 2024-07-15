@@ -1,5 +1,6 @@
 import datetime
 import os
+from statistics import mean
 from typing import Any, Dict, Optional
 
 from dotenv import load_dotenv
@@ -61,7 +62,7 @@ def request_data(url: str, params: Dict[str, Any]) -> Optional[str]:
 
 
 def parse_xml(xml: str, mapping: Dict[str, str]) -> Dict[str, int]:
-    """Parse energy production from xml string for each resource type.
+    """Parse generation output (MW) from xml string for each resource type.
 
     Args:
         xml (str): XML response from Entsoe.
@@ -76,7 +77,8 @@ def parse_xml(xml: str, mapping: Dict[str, str]) -> Dict[str, int]:
 
     for serie in d['GL_MarketDocument']['TimeSeries']:
         psr_type = serie['MktPSRType']['psrType']
-        quantity = serie['Period']['Point']['quantity']
+        # power output newly reported every 15 minutes
+        quantity = round(mean(int(quarter["quantity"])for quarter in serie['Period']['Point']))
         if psr_type in mapping:
             energy[mapping[psr_type]] = int(quantity)
 
