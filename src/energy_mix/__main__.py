@@ -6,8 +6,8 @@ import os
 from dotenv import load_dotenv
 import tweepy  # type: ignore
 
-from bot import emojis
-from bot import entsoe
+from . import emojis
+from . import entsoe
 
 
 load_dotenv()
@@ -46,5 +46,5 @@ def main():
         raise SystemExit
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

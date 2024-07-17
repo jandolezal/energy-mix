@@ -11,34 +11,34 @@ import xmltodict  # type: ignore
 load_dotenv()
 
 
-ENTSOE_URL = 'https://web-api.tp.entsoe.eu/api?'
+ENTSOE_URL = "https://web-api.tp.entsoe.eu/api?"
 
-ENTSOE_SECURITY_TOKEN = os.getenv('ENTSOE_TOKEN')
+ENTSOE_SECURITY_TOKEN = os.getenv("ENTSOE_TOKEN")
 
 # Complete parameter list in Entsoe API documentation.
 # https://transparency.entsoe.eu/content/static_content/Static%20content/web%20api/Guide.html#_psrtype
 ENTSOE_SOURCE_MAPPING = {
-    'B01': 'biomasa',
-    'B02': 'uhli_hnede',
-    'B03': 'uhli_plyn',
-    'B04': 'plyn',
-    'B05': 'uhli_cerne',
-    'B06': 'ropa',
-    'B11': 'voda',
-    'B12': 'voda_rezervoar',
-    'B14': 'jadro',
-    'B15': 'ostatni_oze',
-    'B16': 'slunce',
-    'B17': 'odpad',
-    'B19': 'vitr',
+    "B01": "biomasa",
+    "B02": "uhli_hnede",
+    "B03": "uhli_plyn",
+    "B04": "plyn",
+    "B05": "uhli_cerne",
+    "B06": "ropa",
+    "B11": "voda",
+    "B12": "voda_rezervoar",
+    "B14": "jadro",
+    "B15": "ostatni_oze",
+    "B16": "slunce",
+    "B17": "odpad",
+    "B19": "vitr",
 }
 
 entsoe_params = {
-    'securityToken': ENTSOE_SECURITY_TOKEN,
-    'In_Domain': '10YCZ-CEPS-----N',
-    'ProcessType': 'A16',
-    'DocumentType': 'A75',
-    'TimeInterval': None,
+    "securityToken": ENTSOE_SECURITY_TOKEN,
+    "In_Domain": "10YCZ-CEPS-----N",
+    "ProcessType": "A16",
+    "DocumentType": "A75",
+    "TimeInterval": None,
 }
 
 
@@ -53,7 +53,7 @@ def request_data(url: str, params: Dict[str, Any]) -> Optional[str]:
         Optional[str]: If response status is ok returns xml response as a string.
     """
     headers = {
-        'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0'
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:83.0) Gecko/20100101 Firefox/83.0"
     }
     r = requests.get(url, params=params, headers=headers)
     if r.status_code == 200:
@@ -75,10 +75,12 @@ def parse_xml(xml: str, mapping: Dict[str, str]) -> Dict[str, int]:
     d = xmltodict.parse(xml)
     energy = {}
 
-    for serie in d['GL_MarketDocument']['TimeSeries']:
-        psr_type = serie['MktPSRType']['psrType']
+    for serie in d["GL_MarketDocument"]["TimeSeries"]:
+        psr_type = serie["MktPSRType"]["psrType"]
         # power output newly reported every 15 minutes
-        quantity = round(mean(int(quarter["quantity"])for quarter in serie['Period']['Point']))
+        quantity = round(
+            mean(int(quarter["quantity"]) for quarter in serie["Period"]["Point"])
+        )
         if psr_type in mapping:
             energy[mapping[psr_type]] = int(quantity)
 
@@ -94,11 +96,11 @@ def get_past_hour_param() -> str:
         str: Timeinterval param for Entsoe API call, e.g. '2021-07-07T05%2F2021-07-07T06'
     """
     start = (datetime.datetime.utcnow() - datetime.timedelta(hours=1)).isoformat(
-        timespec='hours'
+        timespec="hours"
     )
-    end = datetime.datetime.utcnow().isoformat(timespec='hours')
+    end = datetime.datetime.utcnow().isoformat(timespec="hours")
     # %2F as backslash for the get request timeinterval parameter
-    past_hour = start + '%2F' + end
+    past_hour = start + "%2F" + end
     return past_hour
 
 
@@ -115,10 +117,10 @@ def group_production(production: Dict[str, int]) -> Dict[str, int]:
     grouped_prod: Dict[str, int] = {}
 
     for k, v in production.items():
-        if k.startswith('uhli'):
-            grouped_prod['uhli'] = grouped_prod.setdefault('uhli', 0) + v
-        elif k.startswith('voda'):
-            grouped_prod['voda'] = grouped_prod.setdefault('voda', 0) + v
+        if k.startswith("uhli"):
+            grouped_prod["uhli"] = grouped_prod.setdefault("uhli", 0) + v
+        elif k.startswith("voda"):
+            grouped_prod["voda"] = grouped_prod.setdefault("voda", 0) + v
         else:
             grouped_prod[k] = v
 
@@ -138,7 +140,7 @@ def reorder_production(production: Dict[str, int]) -> Dict[str, int]:
 
 
 def get_data(
-    timeinterval: str = None,
+    timeinterval: str = "",
     url: str = ENTSOE_URL,
     params: Dict[str, Any] = entsoe_params,
     source_codes: Dict[str, str] = ENTSOE_SOURCE_MAPPING,
@@ -158,7 +160,7 @@ def get_data(
     # Update params to request production for previous hour
     if not timeinterval:
         timeinterval = get_past_hour_param()
-    params['TimeInterval'] = timeinterval
+    params["TimeInterval"] = timeinterval
 
     # Get a xml string with data
     data = request_data(url, params)

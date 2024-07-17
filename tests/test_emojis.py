@@ -1,6 +1,6 @@
 import pytest
 
-import bot.emojis as emojis
+import energy_mix.emojis as emojis
 
 
 def test_calculate_percentages_13_hour():

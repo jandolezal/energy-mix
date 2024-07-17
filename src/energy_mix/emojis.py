@@ -9,22 +9,20 @@ on electricity production.
 Twitter counts every emoji as two characters.
 """
 
-import csv
-from pathlib import Path
-from typing import List, Dict
+from typing import Dict
 
 
 EMOJI_MAPPING = {
-    'uhli': '🏭',
-    'plyn': '🔥',
-    'jadro': '☢️',
-    'ropa': '🛢️',
-    'biomasa': '🌿',
-    'voda': '💧',
-    'slunce': '☀️',
-    'vitr': '💨',
-    'odpad': '🗑️',
-    'ostatni_oze': '♻️',
+    "uhli": "🏭",
+    "plyn": "🔥",
+    "jadro": "☢️",
+    "ropa": "🛢️",
+    "biomasa": "🌿",
+    "voda": "💧",
+    "slunce": "☀️",
+    "vitr": "💨",
+    "odpad": "🗑️",
+    "ostatni_oze": "♻️",
 }
 
 
@@ -108,7 +106,7 @@ def prepare_tweet(
         str: Tweet string.
     """
     # First gather emojis for all resources as one long line
-    tweet_string = ''
+    tweet_string = ""
 
     for resource in production:
         frequency = production.get(resource, 0)
@@ -117,7 +115,7 @@ def prepare_tweet(
         # some emojis are 2 characters long, some only one
         # set on 2 characters to make division to lines easier
         if len(symbol) == 1:
-            symbol += ' '
+            symbol += " "
 
         resource_emojis = symbol * frequency
         tweet_string += resource_emojis
@@ -129,8 +127,8 @@ def prepare_tweet(
     # Now that we have 10 emojis per line get rid of the whitespace
     # which was used to have all emojis 2 characters long.
     # Twitter counts each emoji as 2 characters long no matter what
-    tweet_lines = [line.replace(' ', '') for line in tweet_lines]
+    tweet_lines = [line.replace(" ", "") for line in tweet_lines]
 
-    tweet = '\n'.join(tweet_lines)
+    tweet = "\n".join(tweet_lines)
 
     return tweet

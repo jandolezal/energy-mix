@@ -2,7 +2,7 @@ name: tweet
 
 on:
   schedule:
-    - cron: "05 6-18 * * *"
+    - cron: "05 5-20 * * *"
 
 jobs:
   build:
@@ -14,7 +14,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v2
       with:
-        python-version: 3.9
+        python-version: 3.12
 
     - uses: actions/cache@v2
       with:
@@ -24,10 +24,10 @@ jobs:
           ${{ runner.os }}-pip-
 
     - name: Install dependencies
-      run: python -m pip install -r requirements.txt
+      run: python -m pip install .
 
     - name: Tweet energy mix
-      run: python -m bot.main
+      run: python -m energy_mix
       env:
         ENTSOE_TOKEN: ${{ secrets.ENTSOE_TOKEN }}
         TWITTER_CONSUMER_KEY: ${{ secrets.TWITTER_CONSUMER_KEY }}

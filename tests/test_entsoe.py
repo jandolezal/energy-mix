@@ -3,7 +3,7 @@ import datetime
 import pytest
 from dotenv import load_dotenv
 
-import bot.entsoe as entsoe
+import energy_mix.entsoe as entsoe
 
 
 @pytest.fixture(scope='session', autouse=True)
